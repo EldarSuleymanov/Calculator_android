@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         isResult = true
         var result = 0.0
 
+
         when (operation) {
             "11" -> result = String.format("%.3f", firstnum / secondnum).toDouble()
             "12" -> result = String.format("%.3f", firstnum * secondnum).toDouble()
@@ -74,18 +75,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun backspace(view: View) {
-        if(screen.text.isNotEmpty()){
-            screen.text = screen.text.toString().substring(0, screen.text.length-1)
-            if (!screen.text.isNotEmpty()){
-                screenIsEmpty = true
-                currentScreenDigit = 0.0
-                operation = 0
-                plusButton.rotationY = 0F
-                minusButton.rotationY = 0F
-                multipleButton.rotationY = 0F
-                divideButton.rotationY = 0F
-            } else if (screen.text.isNotEmpty()){
-                currentScreenDigit = screen.text.toString().toDouble()
+        if (!DividedByZero) {
+            if (operation == "11" && currentScreenDigit == 0.0) {
+                screen.text = "error, pass C"
+                cancelButton.rotationY = 58F
+                DividedByZero = true
+            } else {
+            if (screen.text.isNotEmpty()) {
+                screen.text = screen.text.toString().substring(0, screen.text.length - 1)
+                if (!screen.text.isNotEmpty()) {
+                    screenIsEmpty = true
+                    currentScreenDigit = 0.0
+                    operation = 0
+                    plusButton.rotationY = 0F
+                    minusButton.rotationY = 0F
+                    multipleButton.rotationY = 0F
+                    divideButton.rotationY = 0F
+                } else if (screen.text.isNotEmpty()) {
+                    currentScreenDigit = screen.text.toString().toDouble()
+                }
+            }
             }
         }
     }
