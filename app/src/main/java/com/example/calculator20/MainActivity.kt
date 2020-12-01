@@ -10,7 +10,6 @@ import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
     private lateinit var screen: TextView
-
     private lateinit var plusButton: TextView
     private lateinit var cancelButton: TextView
     private lateinit var minusButton: TextView
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var divideButton: TextView
     private lateinit var sqrtButton: TextView
     private lateinit var powButton: TextView
-
     var triger: Boolean = false
     var isResult: Boolean = false
     var currentScreenDigit: Double = 0.0
@@ -36,7 +34,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         screen = findViewById(R.id.result)
-
         plusButton = findViewById(R.id.btn_plus)
         minusButton = findViewById(R.id.btn_minus)
         cancelButton = findViewById(R.id.btn_cancel)
@@ -44,9 +41,6 @@ class MainActivity : AppCompatActivity() {
         divideButton = findViewById(R.id.btn_divide)
         powButton = findViewById(R.id.pow)
         sqrtButton = findViewById(R.id.sqrt)
-
-
-
     }
 
     fun GetResult(firstnum: Double, secondnum: Double, operation: Any): Any {
@@ -69,18 +63,12 @@ class MainActivity : AppCompatActivity() {
         return result
     }
 
-
     @SuppressLint("SetTextI18n")
     fun convertSign(view: View) {
         if (!DividedByZero) {
         if (!screenIsEmpty) {
-            if (screen.text.contains( ".",true)){
                 currentScreenDigit = -currentScreenDigit
                 screen.text = currentScreenDigit.toString()
-            } else{
-                currentScreenDigit = -currentScreenDigit
-                screen.text = currentScreenDigit.toString().split(".")[0]
-            }
         }
     }
     }
@@ -88,19 +76,19 @@ class MainActivity : AppCompatActivity() {
     fun backspace(view: View) {
         if(screen.text.isNotEmpty()){
             screen.text = screen.text.toString().substring(0, screen.text.length-1)
-            operation = 0
-            plusButton.rotationY = 0F
-            minusButton.rotationY = 0F
-            multipleButton.rotationY = 0F
-            divideButton.rotationY = 0F
             if (!screen.text.isNotEmpty()){
                 screenIsEmpty = true
+                currentScreenDigit = 0.0
+                operation = 0
+                plusButton.rotationY = 0F
+                minusButton.rotationY = 0F
+                multipleButton.rotationY = 0F
+                divideButton.rotationY = 0F
+            } else if (screen.text.isNotEmpty()){
+                currentScreenDigit = screen.text.toString().toDouble()
             }
-            currentScreenDigit = screen.text.toString().toDouble()
-
         }
     }
-
 
     @SuppressLint("SetTextI18n")
     fun Numbers(view: View) {
@@ -142,15 +130,10 @@ class MainActivity : AppCompatActivity() {
                 divideButton.rotationY = 0F
                 powButton.rotationX = 0F
 
-
                 if (view.tag.toString() == "11") {
                     divideButton.rotationY = -58F
                     if (isSign && !isResult) { // |
-//                        if (currentScreenDigit == 0.0){
-//
-//                        }
                         screen.text = (GetResult(firstNum, currentScreenDigit, operation)).toString()
-                        //secondaryscreen.text = screen.text.toString()
                     } else {
                         isSign = true
                     }
@@ -159,7 +142,6 @@ class MainActivity : AppCompatActivity() {
                    multipleButton.rotationY = -58F
                     if (isSign && !isResult) {
                         screen.text = (GetResult(firstNum, currentScreenDigit, operation)).toString()
-                       // secondaryscreen.text = screen.text.toString()
                     } else {
                         isSign = true
                     }
@@ -180,19 +162,11 @@ class MainActivity : AppCompatActivity() {
                         isSign = true
                     }
                     triger = true
-                }else if (view.tag.toString() == "14") { // +
-                    plusButton.rotationY = -58F
-                    if (isSign && !isResult) {
-                        screen.text = (GetResult(firstNum, currentScreenDigit, operation)).toString()
-                    } else {
-                        isSign = true
-                    }
-                    triger = true
                 }
-                else if (view.tag.toString() == "22") { // +
+                else if (view.tag.toString() == "22") { // stepen
                     powButton.rotationX = -58F
                     if (isSign && !isResult) {
-                        screen.text = "%.3f".format(GetResult(firstNum, currentScreenDigit, operation)).toString()
+                        screen.text = (GetResult(firstNum, currentScreenDigit, operation)).toString()
                     } else {
                         isSign = true
                     }
@@ -201,14 +175,15 @@ class MainActivity : AppCompatActivity() {
                 pointPressed = false
                 pointPermission = false
                 firstNum = screen.text.toString().toDouble() //zapretit
+                currentScreenDigit = screen.text.toString().toDouble()
                 operation = view.tag.toString()
             } //konec else
         } // konec 10 15
             if (view.tag.toString() == "16"){
-    if (!pointPressed && !screenIsEmpty && !isResult && pointPermission){
+    if (!screenIsEmpty && !screen.text.contains(".")){
         screen.text = screen.text.toString() + "."
         pointPressed = true
-    } else if (!pointPressed && screenIsEmpty) {
+    } else if (screenIsEmpty) {
         screen.text = "0."
         pointPressed = true
     }
@@ -229,21 +204,8 @@ class MainActivity : AppCompatActivity() {
             pointPressed = true
             firstNum = (screen.text).toString().toDouble()
             isSign = false
-            currentScreenDigit = 0.0
+            currentScreenDigit = screen.text.toString().toDouble()
             signPermission = false
-//        if (operation.toString() == "11") {
-//            screen.text = (firstNum / currentScreenDigit).toString()
-//        }
-//        else if (operation.toString() == "12")  {
-//            screen.text = (firstNum * currentScreenDigit).toString()
-//        }
-//        else if (operation.toString() == "13") {
-//            screen.text = (firstNum - currentScreenDigit).toString()
-//        }
-//        else if (operation.toString() == "14") {
-//            screen.text = (firstNum + currentScreenDigit).toString()
-//        }
-
     }
 }
 }
@@ -280,19 +242,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun Sqrt(view: View) {
-       if (!screen.text.contains("-", true) && !screenIsEmpty){
-            temp = "%.3f".format(sqrt(screen.text.toString().toDouble()))
-           if(temp.contains( ".000",true)){
-               screen.text = temp.split(".")[0]
-           } else{
-               screen.text = temp
+        if (!DividedByZero) {
+            if (operation == "11" && currentScreenDigit == 0.0) {
+                screen.text = "error, pass C"
+                cancelButton.rotationY = 58F
+                DividedByZero = true
+            } else {
+                if (!screen.text.contains("-", true) && !screenIsEmpty){
+                    temp = "%.3f".format(sqrt(screen.text.toString().toDouble()))
+                    if(temp.contains( ".000",true)){
+                        screen.text = temp.split(".")[0]
+                    } else {
+                        screen.text = temp
+                    }
+                }
            }
        }
     }
-
-
-
-
 }
 
 
